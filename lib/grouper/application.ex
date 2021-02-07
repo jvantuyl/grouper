@@ -1,6 +1,6 @@
 defmodule Grouper.Application do
   @moduledoc """
-  application for Grouper
+  Application for Grouper
 
   This starts up an application supervisor that manages global tables and
   metadata used to drive groups.

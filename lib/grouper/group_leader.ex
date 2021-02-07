@@ -64,7 +64,7 @@ defmodule Grouper.GroupLeader do
       to which it forwards IO requests
 
     * `parent` - this specifies the parent process, useful for testing and when
-                 not being started in a normal supervision tree
+      not being started in a normal supervision tree
   """
   @spec start_link(options()) :: GenServer.on_start()
   def start_link(opts \\ []) when is_list(opts) do

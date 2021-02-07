@@ -9,7 +9,7 @@ defmodule Grouper.Config do
   under an application, but useful for scripts and tests.
 
   NOTE: Will not load the environment if it's already been loaded or
-        suppressed.
+  suppressed.
   """
   @spec load_otp_env(Application.app(), Data.opts()) :: :ok
   def load_otp_env(app \\ true, opts \\ []) when is_atom(app) do
@@ -23,8 +23,8 @@ defmodule Grouper.Config do
   config.
 
   NOTE: Will not suppress loading the environment if it's already been
-        loaded. Must be called before anything attempts to read config to be
-        effective.
+  loaded. Must be called before anything attempts to read config to be
+  effective.
   """
   @spec suppress_otp_env(Data.opts()) :: :ok
   def suppress_otp_env(opts \\ []) do

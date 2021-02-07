@@ -42,15 +42,15 @@ defmodule Grouper.Group do
 
   ## Options
 
-    * `:group_key` - when more than one group is running under a single
-      supervisor, this key is used to disambiguate start and stop requests.
+  * `:group_key` - when more than one group is running under a single
+    supervisor, this key is used to disambiguate start and stop requests.
 
-    * `:force_group` - when set to `true`, will start a group under an
-      application. This is dangerous as it interferes with OTP's application
-      shutdown behavior.
+  * `:force_group` - when set to `true`, will start a group under an
+    application. This is dangerous as it interferes with OTP's application
+    shutdown behavior.
 
-    Additional options are passed on to the
-    `Grouper.GroupLeader.start_link/1` function.
+  Additional options are passed on to the `Grouper.GroupLeader.start_link/1`
+  function.
 
   """
   require Logger

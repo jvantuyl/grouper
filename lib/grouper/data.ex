@@ -89,7 +89,7 @@ defmodule Grouper.Data do
   ## Options
 
   - `:leader` - override detected group leader with specified one (mostly
-                used in testing)
+    used in testing)
   """
   @spec api(opts()) :: {:ok, t()} | {:error, :no_group}
   def api(opts) when is_list(opts) do
