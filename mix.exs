@@ -1,17 +1,24 @@
 defmodule Grouper.MixProject do
   use Mix.Project
 
+  @version "0.1.0"
+
   def project do
     [
       app: :grouper,
       version: "0.1.0",
-      elixir: "~> 1.11",
+      elixir: "~> 1.11.1",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       deps: deps(),
+      name: "Grouper",
+      description: "Isolates groups of process subtrees together for configuration and name registration purposes.",
+      source_url: "https://github.com/jvantuyl/grouper",
+      package: package(),
       dialyzer: [
         ignore_warnings: ".dialyzer_ignore.exs"
-      ]
+      ],
+      docs: docs()
     ]
   end
 
@@ -37,6 +44,21 @@ defmodule Grouper.MixProject do
       {:ex_doc, "~> 0.23", only: :dev, runtime: false},
       # testing / quality
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false}
+    ]
+  end
+
+
+  defp package() do
+    [licenses: ["MIT"], links: %{"GitHub" => "https://github.com/jvantuyl/grouper"}]
+  end
+
+  defp docs() do
+    [
+      main: "readme",
+      api_reference: false,
+      extras: ["README.md": [title: "Overview"], "LICENSE.md": [title: "License"]],
+      authors: ["Jayson Vantuyl"],
+      source_ref: "v#{@version}"
     ]
   end
 end
