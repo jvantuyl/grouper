@@ -27,9 +27,6 @@ Or run a single function in its own group like this:
 
     Grouper.exec!(&MyApp.my_task/0)
 
-(Do this at the beginning of each test and at the beginning of your
-scripts.)
-
 During normal application runtime, each application gets its own namespace
 for processes and has isolated config.
 
