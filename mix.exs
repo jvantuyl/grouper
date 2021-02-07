@@ -33,6 +33,8 @@ defmodule Grouper.MixProject do
   defp deps do
     [
       {:ex2ms, "~> 1.0"},
+      # doc
+      {:ex_doc, "~> 0.23", only: :dev, runtime: false},
       # testing / quality
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false}
     ]

@@ -1,22 +1,31 @@
-defmodule Grouper.Group.Reaper do
+defmodule Grouper.Reaper do
   @moduledoc """
-  Reaps ETS metadata for defunct groups and registered names.
+  Reaps metadata for defunct groups and registered names.
   """
   use GenServer
+
   require Ex2ms
   require Logger
 
-  # API
+  alias Grouper.Data
 
+  # === API ===
+
+  @doc """
+  starts reaper
+  """
   def start_link(opts \\ []) do
     GenServer.start_link(__MODULE__, [], opts)
   end
 
-  # GenServer callbacks
+  # === GenServer Callbacks ===
+
+  @impl true
   def init([]) do
     :timer.send_interval(60_000, :reap)
   end
 
+  @impl true
   def handle_info(:reap, state) do
     ms =
       Ex2ms.fun do
@@ -25,12 +34,12 @@ defmodule Grouper.Group.Reaper do
 
     for glpid <- :ets.select(:grouper_global_tab, ms) do
       if Process.alive?(glpid) do
-        {:ok, names} = Grouper.Group.Data.enum(:registered_name, leader: glpid)
+        {:ok, names} = Data.enum(:registered_name, leader: glpid)
 
         for {name, pid} <- names do
           if not Process.alive?(pid) do
             # Logger.info("reaping dead Grouper.Registry registed name (#{name} -> #{inspect(pid)})")
-            Grouper.Group.Data.del(:registered_name, name, leader: glpid)
+            Data.del(:registered_name, name, leader: glpid)
           end
         end
       else

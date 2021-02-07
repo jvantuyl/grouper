@@ -1,14 +1,14 @@
-defmodule Grouper.Group.Leader do
+defmodule Grouper.GroupLeader do
   @moduledoc """
   This implements a group leader capable of IO and storing group metadata.
 
-  A `Grouper.Group.Leader` forwards IO upstream, just like any other
+  A `Grouper.GroupLeader` forwards IO upstream, just like any other
   group_leader. In addition, it also allocates a ETS table for this group and
   registers it in a global ETS table.
 
   Requests for configuration and naming functions (mediated by the
-  `Grouper.Group.Data` module) store information in this ETS table (among
-  other places).
+  `Grouper.Data` module) store information in this ETS table (among other
+  places).
   """
 
   use GenServer
@@ -18,7 +18,13 @@ defmodule Grouper.Group.Leader do
   defstruct [:self, :group_leader, :commandeered, :ets_table_id]
 
   @typedoc "state for Grouper.Leader"
-  @type t() :: %__MODULE__{}
+  @type t() :: %__MODULE__{
+          self: pid(),
+          group_leader: pid(),
+          commandeered: [pid()],
+          # we used named tables, so this can't be a tid (i.e. ref)
+          ets_table_id: atom()
+        }
 
   @typedoc "options to start function"
   @type options() :: [option()]
@@ -41,7 +47,7 @@ defmodule Grouper.Group.Leader do
   @typedoc "IO request info term"
   @type io_request() :: {:io_request, pid(), any(), any()}
 
-  # API
+  # === API ===
 
   @doc """
   Starts a Grouper.Leader process linked to the current process.
@@ -66,6 +72,9 @@ defmodule Grouper.Group.Leader do
     GenServer.start_link(__MODULE__, init_opts, start_link_opts)
   end
 
+  @doc """
+  gets state data for a given group leader
+  """
   @spec get_group_data(pid()) :: {:ok, t()}
   def get_group_data(glpid) do
     case :ets.lookup(:grouper_global_tab, {:group, glpid}) do
@@ -77,15 +86,23 @@ defmodule Grouper.Group.Leader do
     end
   end
 
+  @doc """
+  gets original group leader for this process
+  """
+  @spec get_group_leader(pid) :: pid()
   def get_group_leader(glpid) do
     GenServer.call(glpid, :get_group_leader)
   end
 
+  @doc """
+  stops a group leader process
+  """
+  @spec stop(pid(), reason :: atom()) :: :ok
   def stop(glpid, reason \\ :normal) do
     GenServer.stop(glpid, reason)
   end
 
-  # GenServer callbacks
+  # === GenServer Callbacks ===
 
   @doc false
   @impl true
@@ -117,7 +134,7 @@ defmodule Grouper.Group.Leader do
       end
 
     uid = :erlang.unique_integer([:positive])
-    tid = :ets.new(:"grouper_group_#{uid}_tab", [:set, :public])
+    tid = :ets.new(:"grouper_group_#{uid}_tab", [:set, :public, :named_table])
 
     state = %__MODULE__{
       self: self(),
@@ -168,10 +185,10 @@ defmodule Grouper.Group.Leader do
     :ignored
   end
 
-  # TODO: trap_exits and re-parent processes to application master during shutdown
-  #       if feasible, not sure on efficiency of walking entire process space
+  # TODO: re-parent processes to application master during shutdown if
+  #       feasible, not sure on efficiency of walking entire process space
 
-  # internal helper functions
+  # === helper functions ===
 
   defp get_parent(opts) do
     ancestors = Process.get(:"$ancestors")
